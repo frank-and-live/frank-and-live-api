@@ -6,14 +6,14 @@ const { roles } = require('../config/roles');
 
 const userSchema = mongoose.Schema(
   {
-    name: {
+    facebookName: {
       type: String,
       required: true,
       trim: true,
     },
-    email: {
+    facebookEmail: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       trim: true,
       lowercase: true,
@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       minlength: 8,
       validate(value) {
@@ -43,6 +43,22 @@ const userSchema = mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    facebookId: {
+      type: String,
+      required: false,
+      unique: true,
+      trim: true,
+    },
+    facebookAccessToken: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    facebookPicture: {
+      type: Object,
+      required: false,
+      trim: true,
     },
   },
   {

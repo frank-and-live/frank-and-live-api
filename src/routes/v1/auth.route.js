@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/register', validate(authValidation.register), authController.register);
 router.post('/login', validate(authValidation.login), authController.login);
+router.post('/login-with-facebook', validate(authValidation.loginWithFacebook), authController.loginWithFacebook);
 router.post('/logout', validate(authValidation.logout), authController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
 router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
@@ -95,8 +96,8 @@ module.exports = router;
  *                 type: string
  *                 format: password
  *             example:
- *               email: fake@example.com
- *               password: password1
+ *               email: t
+ *               password: tttt1111
  *     responses:
  *       "200":
  *         description: OK
@@ -118,6 +119,48 @@ module.exports = router;
  *             example:
  *               code: 401
  *               message: Invalid email or password
+ */
+
+/**
+ * @swagger
+ * /auth/login-with-facebook:
+ *   post:
+ *     summary: Login with Facebook access token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - facebookAccessToken
+ *             properties:
+ *               facebookAccessToken:
+ *                 type: string
+ *             example:
+ *               facebookAccessToken: looongaccesstoken
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 tokens:
+ *                   $ref: '#/components/schemas/AuthTokens'
+ *       "401":
+ *         description: Invalid Facebook access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 401
+ *               message: Invalid Facebook access token
  */
 
 /**

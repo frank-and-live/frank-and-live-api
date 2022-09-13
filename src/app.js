@@ -52,10 +52,6 @@ if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
 // set directory for public assets
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -16,6 +16,12 @@ const login = {
   }),
 };
 
+const loginWithFacebook = {
+  body: Joi.object().keys({
+    facebookAccessToken: Joi.string().required(),
+  }),
+};
+
 const logout = {
   body: Joi.object().keys({
     refreshToken: Joi.string().required(),
@@ -50,8 +56,8 @@ const verifyEmail = {
 };
 
 module.exports = {
-  register,
   login,
+  loginWithFacebook,
   logout,
   refreshTokens,
   forgotPassword,

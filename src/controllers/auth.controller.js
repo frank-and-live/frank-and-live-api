@@ -1,6 +1,36 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
+const axios = require('axios');
 const { authService, userService, tokenService, emailService } = require('../services');
+
+const loginWithFacebook = catchAsync(async (req, res) => {
+  const { facebookAccessToken } = req.body;
+
+  const facebookUser = await axios.get('https://graph.facebook.com/v14.0/me', {
+    params: {
+      access_token: facebookAccessToken,
+      fields: 'id,name,email,picture',
+      locale: 'en_US',
+    },
+  });
+
+console.log('auth.controller - facebookUser: ', facebookUser);
+
+
+  var user = await userService.getUserByFacebookId(facebookUser.data.id);
+
+  if (!user) {
+    user = await userService.createUser({
+      facebookName: facebookUser.data.name,
+      facebookEmail: facebookUser.data.email,
+      facebookId: facebookUser.data.id,
+      facebookAccessToken: facebookAccessToken,
+      facebookPicture: facebookUser.data.picture
+    });
+  }
+  const tokens = await tokenService.generateAuthTokens(user);
+  res.send({ user, tokens });
+});
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -48,6 +78,7 @@ const verifyEmail = catchAsync(async (req, res) => {
 });
 
 module.exports = {
+  loginWithFacebook,
   register,
   login,
   logout,

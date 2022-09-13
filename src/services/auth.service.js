@@ -6,6 +6,19 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
 /**
+ * Login with Facebook accessToken
+ * @param {string} facebookAccessToken
+ * @returns {Promise<User>}
+ */
+ const loginUserWithFacebookAccessToken = async (facebookAccessToken) => {
+  const user = await userService.getUserByFacebookAccessToken(facebookAccessToken);
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Facebook access token is invalid');
+  }
+  return user;
+};
+
+/**
  * Login with username and password
  * @param {string} email
  * @param {string} password
@@ -47,7 +60,7 @@ const refreshAuth = async (refreshToken) => {
     await refreshTokenDoc.remove();
     return tokenService.generateAuthTokens(user);
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
+    throw new ApiError(httpStatus.FORBIDDEN, 'Refresh token is invalid');
   }
 };
 
@@ -91,6 +104,7 @@ const verifyEmail = async (verifyEmailToken) => {
 };
 
 module.exports = {
+  loginUserWithFacebookAccessToken,
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
