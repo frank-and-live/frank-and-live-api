@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const config = require('../config/config');
 const catchAsync = require('../utils/catchAsync');
 const axios = require('axios');
 const { authService, userService, tokenService, emailService } = require('../services');
@@ -6,19 +7,26 @@ const { authService, userService, tokenService, emailService } = require('../ser
 const loginWithFacebook = catchAsync(async (req, res) => {
   const { facebookAccessToken } = req.body;
 
-  const facebookUser = await axios.get('https://graph.facebook.com/v14.0/me', {
+  const facebookUser = await axios.get(config.facebook.graphApiUrl + '/me', {
     params: {
       access_token: facebookAccessToken,
       fields: 'id,name,email,picture',
       locale: 'en_US',
     },
   });
+  console.log('auth.controller - facebookUser: ', facebookUser.data);
 
-console.log('auth.controller - facebookUser: ', facebookUser);
-
+  const facebookUserLongLivedTokenResponse = await axios.get(config.facebook.graphApiUrl + '/oauth/access_token', {
+    params: {
+      grant_type: 'fb_exchange_token',
+      client_id: config.facebook.appIdTest,
+      client_secret: config.facebook.appSecretTest,
+      fb_exchange_token: facebookAccessToken,
+    },
+  });
+  console.log('auth.controller - facebookUserLongLivedToken: ', facebookUserLongLivedTokenResponse.data);
 
   var user = await userService.getUserByFacebookId(facebookUser.data.id);
-
   if (!user) {
     user = await userService.createUser({
       facebookName: facebookUser.data.name,
@@ -28,7 +36,20 @@ console.log('auth.controller - facebookUser: ', facebookUser);
       facebookPicture: facebookUser.data.picture
     });
   }
-  const tokens = await tokenService.generateAuthTokens(user);
+  // const tokens = await tokenService.generateAuthTokens(user);
+
+  const fnlTokens = await tokenService.generateAuthTokens(user);
+  const tokens = {
+    fnl: fnlTokens,
+    facebook: {
+      access: {
+        token: facebookUserLongLivedTokenResponse.data.access_token,
+        expires: facebookUserLongLivedTokenResponse.data.expires_in,
+      }
+    }
+  }
+  console.log('auth.controller - tokens: ', tokens);
+
   res.send({ user, tokens });
 });
 

@@ -14,11 +14,9 @@ const createEvent = async (userId, eventBody) => {
   const event = await Event.create({
     name: eventBody.name,
     user: userId,
-    type: eventBody.type,
+    facebookAccount: eventBody.facebookAccount,
     starts: moment(eventBody.starts).format(),
     ends: moment(eventBody.ends).format(),
-    pageId: eventBody.pageId,
-    pageAccessToken: eventBody.pageAccessToken,
   });
   return event;
 };

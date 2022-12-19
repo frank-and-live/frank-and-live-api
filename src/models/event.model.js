@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 const { eventTypes } = require('../config/events');
+const { object } = require('joi');
 
 const eventSchema = mongoose.Schema(
   {
@@ -14,15 +15,9 @@ const eventSchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    type: {
-      type: String,
-      enum: [eventTypes.FACEBOOK, eventTypes.INSTAGRAM],
+    facebookAccount: {
+      type: Object,
       required: false,
-    },
-    account: {
-      type: String,
-      required: false,
-      trim: true,
     },
     starts: {
       type: Date,
@@ -31,16 +26,6 @@ const eventSchema = mongoose.Schema(
     ends: {
       type: Date,
       required: true,
-    },
-    pageId: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    pageAccessToken: {
-      type: String,
-      required: true,
-      trim: true
     },
   },
   {

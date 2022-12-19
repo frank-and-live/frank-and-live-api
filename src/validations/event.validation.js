@@ -4,12 +4,9 @@ const { objectId } = require('./custom.validation');
 const createEvent = {
   body: Joi.object().keys({
     name: Joi.string().required(),
-    type: Joi.string().valid('facebook', 'instagram'),
-    account: Joi.string(),
+    facebookAccount: Joi.object().required(),
     starts: Joi.date().required(),
     ends: Joi.date().required(),
-    pageId: Joi.string().required(),
-    pageAccessToken: Joi.string().required(),
   }),
 };
 
@@ -38,11 +35,9 @@ const updateEvent = {
   body: Joi.object()
     .keys({
       name: Joi.string().required(),
-      type: Joi.string().required().valid('facebook', 'instagram'),
+      facebookAccount: Joi.object().required(),
       starts: Joi.date().required(),
       ends: Joi.date().required(),
-      pageId: Joi.string().required(),
-      pageAccessToken: Joi.string().required(),
     })
     .min(1),
 };
