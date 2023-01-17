@@ -4,7 +4,7 @@ const { objectId } = require('./custom.validation');
 const createEvent = {
   body: Joi.object().keys({
     name: Joi.string().required(),
-    facebookAccount: Joi.object().required(),
+    facebookAccount: Joi.string().required(),
     starts: Joi.date().required(),
     ends: Joi.date().required(),
   }),
